@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS order_item (
+    order_id INT8 NOT NULL REFERENCES "order"(order_id) ON DELETE CASCADE,
+    item_id INT8 NOT NULL REFERENCES item(item_id) ON DELETE CASCADE
+);
