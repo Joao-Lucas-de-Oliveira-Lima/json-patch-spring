@@ -16,12 +16,9 @@ import java.time.Instant;
 @ControllerAdvice
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    Logger logger = LoggerFactory.getLogger(CustomizedResponseEntityExceptionHandler.class);
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionDto> handlerException(WebRequest webRequest, Exception e) {
         String message = "An unexpected error occurred on the server. Please try again later.";
-
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(buildResponse(webRequest, message));
