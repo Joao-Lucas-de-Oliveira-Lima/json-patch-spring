@@ -1,20 +1,15 @@
-CREATE OR REPLACE FUNCTION populate_order_tags()
-    RETURNS void AS
-$$
-DECLARE
-    order_id   INT8;
-    num_tags   INT;
-    tag_number INT;
-BEGIN
-    FOR order_id IN SELECT order_id FROM "order"
-        LOOP
-            num_tags := FLOOR(RANDOM() * 10 + 1);
+DO $$
+    DECLARE
+        v_order_id INT8;
+        num_tags INT;
+        i INT;
+    BEGIN
+        FOR v_order_id IN (SELECT o.order_id FROM "order" o) LOOP
+                num_tags := trunc(random() * 10 + 1);
 
-            FOR tag_number IN 1..num_tags
-                LOOP
-                    INSERT INTO order_tag (order_tag, tag)
-                    VALUES (order_id, 'Tag ' || tag_number);
-                END LOOP;
-        END LOOP;
-END;
-$$ LANGUAGE plpgsql;
+                FOR i IN 1..num_tags LOOP
+                        INSERT INTO order_tags (order_order_id, tags)
+                        VALUES (v_order_id, 'Tag ' || i || ' - ' || md5(random()::text));
+                    END LOOP;
+            END LOOP;
+    END $$;

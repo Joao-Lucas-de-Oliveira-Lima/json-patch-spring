@@ -1,5 +1,6 @@
 package dev.jl.jsonpatchspring.order;
 
+import dev.jl.jsonpatchspring.order.address.Address;
 import dev.jl.jsonpatchspring.order.item.Item;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -8,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
-@Table(name = "order")
+@Table(name = "\"order\"")
 @Data
 @NoArgsConstructor
 class Order {
@@ -20,15 +21,15 @@ class Order {
     private String orderNumber;
     @Column(name = "promo_code")
     private String promoCode;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
-            name = "order_tag",
-            joinColumns = @JoinColumn(name = "order_id")
+            name = "order_tags",
+            joinColumns = @JoinColumn(name = "order_order_id")
     )
     private List<String> tags;
     @Embedded
     private Address address;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "order_item",
             joinColumns = {@JoinColumn(name = "order_id")},
