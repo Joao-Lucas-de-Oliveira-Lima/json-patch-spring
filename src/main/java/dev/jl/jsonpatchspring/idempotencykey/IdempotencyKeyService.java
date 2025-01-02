@@ -16,7 +16,7 @@ public class IdempotencyKeyService {
         return idempotencyKeyRepository.findById(key).isPresent();
     }
 
-    public IdempotencyKey save(UUID key) {
-        return idempotencyKeyRepository.save(new IdempotencyKey(key));
+    public void save(UUID key) {
+        idempotencyKeyRepository.save(new IdempotencyKey(key));
     }
 }

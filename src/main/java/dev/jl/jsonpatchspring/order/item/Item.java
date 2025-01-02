@@ -1,6 +1,8 @@
 package dev.jl.jsonpatchspring.order.item;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,8 +20,13 @@ public class Item implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
     private long id;
-    @Column(name = "product_name")
+    @Column(name = "product_name", nullable = false)
+    @NotBlank
     private String productName;
+    @Column(nullable = false)
+    @PositiveOrZero
     private Integer quantity;
+    @Column(nullable = false)
+    @PositiveOrZero
     private Double price;
 }

@@ -1,5 +1,7 @@
 package dev.jl.jsonpatchspring.exception;
 
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,13 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     public ResponseEntity<ExceptionDto> handlerResourceNotFoundException(WebRequest webRequest, Exception e) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(buildResponse(webRequest, e.getMessage()));
+    }
+
+    @ExceptionHandler(IdempotencyKeyConflictException.class)
+    public ResponseEntity<ExceptionDto> handlerIdempotencyKeyConflictException(WebRequest webRequest, Exception e) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
                 .body(buildResponse(webRequest, e.getMessage()));
     }
 
