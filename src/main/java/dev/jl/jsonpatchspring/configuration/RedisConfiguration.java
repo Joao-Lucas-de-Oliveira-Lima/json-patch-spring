@@ -17,14 +17,13 @@ import java.util.Map;
 public class RedisConfiguration {
 
     @Value("${cache.default.time-to-live}")
-    private Duration defaultTTL;
+    private Duration defaultTtl;
 
     @Bean
     public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(defaultTTL)
+                .entryTtl(defaultTtl)
                 .enableTimeToIdle();
-
         return RedisCacheManager.builder(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory, BatchStrategies.scan(1000)))
                 .cacheDefaults(defaultCacheConfig)
                 .build();

@@ -2,7 +2,9 @@ package dev.jl.jsonpatchspring.order;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import dev.jl.jsonpatchspring.order.address.Address;
+import dev.jl.jsonpatchspring.order.address.AddressDto;
 import dev.jl.jsonpatchspring.order.item.Item;
+import dev.jl.jsonpatchspring.order.item.ItemResponseDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,7 +21,7 @@ public class OrderResponseDto implements Serializable {
     private long Id;
     private String orderNumber;
     private String promoCode;
-    private Address address;
-    private List<Item> items;
+    private AddressDto address;
+    private List<ItemResponseDto> items;
     private List<String> tags;
 }

@@ -1,18 +1,19 @@
 package dev.jl.jsonpatchspring.order.address;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Embeddable
+import java.io.Serial;
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Address {
+public class AddressDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private String city;
     private String street;
-    @Column(name = "zip_code")
     private String zipCode;
 }

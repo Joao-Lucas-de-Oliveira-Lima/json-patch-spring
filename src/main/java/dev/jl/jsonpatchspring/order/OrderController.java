@@ -1,7 +1,10 @@
 package dev.jl.jsonpatchspring.order;
 
+import dev.jl.jsonpatchspring.exception.BadRequestException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -22,9 +25,14 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<OrderResponseDto> save(
-            @RequestHeader(name = "Idempotency-Key") UUID idempotencyKey, @RequestBody OrderRequestDto newOrder) {
+            @RequestHeader(name = "Idempotency-Key") UUID idempotencyKey,
+            @Valid @RequestBody OrderRequestDto newOrder,
+            BindingResult bindingResult) throws BadRequestException {
+        if (bindingResult.hasErrors()) {
+            throw new BadRequestException("The provided data is missing or not in a valid format.", bindingResult);
+        }
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(orderService.save(idempotencyKey,newOrder));
+                .body(orderService.save(idempotencyKey, newOrder));
     }
 }

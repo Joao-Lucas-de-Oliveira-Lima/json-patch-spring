@@ -13,20 +13,15 @@ import java.io.Serializable;
 @Table(name = "item")
 @Data
 @NoArgsConstructor
-public class Item implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class Item{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
     private long id;
     @Column(name = "product_name", nullable = false)
-    @NotBlank
     private String productName;
     @Column(nullable = false)
-    @PositiveOrZero
     private Integer quantity;
     @Column(nullable = false)
-    @PositiveOrZero
     private Double price;
 }
