@@ -5,14 +5,16 @@ import dev.jl.jsonpatchspring.order.item.Item;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.Instant;
 import java.util.List;
 
 @Entity
 @Table(name = "\"order\"")
 @Data
 @NoArgsConstructor
-class Order {
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
@@ -35,4 +37,7 @@ class Order {
             joinColumns = {@JoinColumn(name = "order_id")},
             inverseJoinColumns = {@JoinColumn(name = "item_id")})
     private List<Item> items;
+    @Column(name = "last_modified")
+    @LastModifiedDate
+    private Instant lastModified;
 }

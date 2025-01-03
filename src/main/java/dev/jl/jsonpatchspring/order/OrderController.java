@@ -2,6 +2,10 @@ package dev.jl.jsonpatchspring.order;
 
 import dev.jl.jsonpatchspring.exception.BadRequestException;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -35,4 +39,27 @@ public class OrderController {
                 .status(HttpStatus.CREATED)
                 .body(orderService.save(idempotencyKey, newOrder));
     }
+
+    @GetMapping
+    public ResponseEntity<Page<OrderResponseDto>> findByCriteria(
+            @PageableDefault(
+                    direction = Sort.Direction.ASC,
+                    sort = {"orderNumber"},
+                    size = 20
+            )
+            Pageable pageable,
+            @RequestParam(required = false, name = "orderNumber")
+            String orderNumber,
+            @RequestParam(required = false, name = "promoCode")
+            String promoCode,
+            @RequestParam(required = false, name = "city")
+            String city,
+            @RequestParam(required = false, name = "street")
+            String street,
+            @RequestParam(required = false, name = "zipCode")
+            String zipCode) {
+        return ResponseEntity.ok(orderService.findByCriteria(
+                pageable, promoCode, orderNumber, city, street, zipCode));
+    }
+
 }

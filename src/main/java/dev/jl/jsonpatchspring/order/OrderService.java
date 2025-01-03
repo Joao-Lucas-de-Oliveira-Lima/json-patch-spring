@@ -2,12 +2,13 @@ package dev.jl.jsonpatchspring.order;
 
 import dev.jl.jsonpatchspring.exception.IdempotencyKeyConflictException;
 import dev.jl.jsonpatchspring.exception.ResourceNotFoundException;
-import dev.jl.jsonpatchspring.idempotencykey.IdempotencyKey;
 import dev.jl.jsonpatchspring.idempotencykey.IdempotencyKeyService;
 import dev.jl.jsonpatchspring.utils.mapper.Mapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +33,9 @@ public class OrderService {
         return mapper.mapToObject(orderFound, OrderResponseDto.class);
     }
 
-    @CachePut(value = "order", key = "#result.id")
     @Transactional
+    @CachePut(value = "order", key = "#result.id")
+    @CacheEvict(value = "orderPage", allEntries = true)
     public OrderResponseDto save(UUID idempotencyKey, OrderRequestDto newOrder) throws IdempotencyKeyConflictException {
         if (idempotencyKeyService.findById(idempotencyKey)) {
             String message = String.format(
@@ -45,5 +47,13 @@ public class OrderService {
         Order orderSaved = orderRepository.save(mapper.mapToObject(newOrder, Order.class));
         idempotencyKeyService.save(idempotencyKey);
         return mapper.mapToObject(orderSaved, OrderResponseDto.class);
+    }
+
+    @Cacheable(value = "orderPage")
+    public Page<OrderResponseDto> findByCriteria(
+            Pageable pageable, String promoCode, String orderNumber, String city, String street, String zipCode) {
+        Page<Order> orderPage = orderRepository.findByCriteria(
+                pageable, orderNumber, promoCode, city, street, zipCode);
+        return orderPage.map(order -> mapper.mapToObject(order, OrderResponseDto.class));
     }
 }
