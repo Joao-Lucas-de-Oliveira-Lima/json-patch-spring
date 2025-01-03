@@ -56,4 +56,8 @@ public class OrderService {
                 pageable, orderNumber, promoCode, city, street, zipCode);
         return orderPage.map(order -> mapper.mapToObject(order, OrderResponseDto.class));
     }
+
+    public void deleteById(Long id) {
+        orderRepository.deleteById(id);
+    }
 }

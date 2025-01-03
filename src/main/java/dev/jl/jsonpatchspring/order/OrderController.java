@@ -62,4 +62,11 @@ public class OrderController {
                 pageable, promoCode, orderNumber, city, street, zipCode));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable(name = "id") Long id){
+        orderService.deleteById(id);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
 }
