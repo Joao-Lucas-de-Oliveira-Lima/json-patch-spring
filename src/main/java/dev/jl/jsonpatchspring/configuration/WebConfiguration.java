@@ -12,4 +12,5 @@ public class WebConfiguration {
     public ShallowEtagHeaderFilter shallowEtagHeaderFilter(){
         return new ShallowEtagHeaderFilter();
     }
+
 }

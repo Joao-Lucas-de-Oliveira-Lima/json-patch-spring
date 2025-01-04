@@ -27,7 +27,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         ExceptionDto response = ExceptionDto.builder()
                 .Status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .title(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-                .instance(webRequest.getContextPath())
+                .instance(webRequest.getDescription(false))
                 .detail(message)
                 .timestamp(Instant.now())
                 .build();
@@ -39,7 +39,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ExceptionDto> handlerResourceNotFoundException(WebRequest webRequest, Exception e) {
         ExceptionDto response = ExceptionDto.builder()
-                .instance(webRequest.getContextPath())
+                .instance(webRequest.getDescription(false))
                 .Status(HttpStatus.NOT_FOUND.value())
                 .title(HttpStatus.NOT_FOUND.getReasonPhrase())
                 .detail(e.getMessage())
@@ -53,7 +53,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     @ExceptionHandler(IdempotencyKeyConflictException.class)
     public ResponseEntity<ExceptionDto> handlerIdempotencyKeyConflictException(WebRequest webRequest, Exception e) {
         ExceptionDto response = ExceptionDto.builder()
-                .instance(webRequest.getContextPath())
+                .instance(webRequest.getDescription(false))
                 .Status(HttpStatus.CONFLICT.value())
                 .title(HttpStatus.CONFLICT.getReasonPhrase())
                 .detail(e.getMessage())

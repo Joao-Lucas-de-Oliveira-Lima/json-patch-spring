@@ -69,4 +69,15 @@ public class OrderController {
                 .status(HttpStatus.NO_CONTENT)
                 .build();
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<OrderResponseDto> updateById(
+            @PathVariable(name = "id") Long id,
+            @RequestBody @Valid OrderRequestDto update,
+            BindingResult bindingResult) throws BadRequestException{
+        if(bindingResult.hasErrors()){
+            throw new BadRequestException("The provided data is missing or not in a valid format.", bindingResult);
+        }
+        return ResponseEntity.ok(orderService.updateById(id, update));
+    }
 }

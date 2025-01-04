@@ -7,6 +7,7 @@ import dev.jl.jsonpatchspring.utils.mapper.Mapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class OrderService {
     @Cacheable(value = "order", key = "#id")
     public OrderResponseDto findById(Long id) throws ResourceNotFoundException {
         Order orderFound = orderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(""));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Order with ID %d not found.", id)));
         return mapper.mapToObject(orderFound, OrderResponseDto.class);
     }
 
@@ -57,7 +58,22 @@ public class OrderService {
         return orderPage.map(order -> mapper.mapToObject(order, OrderResponseDto.class));
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "order", key="#id"),
+            @CacheEvict(value = "orderPage", allEntries = true)
+    })
     public void deleteById(Long id) {
         orderRepository.deleteById(id);
+    }
+
+    @Transactional
+    @CachePut(value = "order", key = "#id")
+    @CacheEvict(value = "order", allEntries = true)
+    public OrderResponseDto updateById(Long id, OrderRequestDto updateData) throws ResourceNotFoundException {
+        Order existingOrder = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Order with ID %d not found.", id)));
+        mapper.mapProperties(updateData, existingOrder);
+        Order savedOrder = orderRepository.save(existingOrder);
+        return mapper.mapToObject(savedOrder, OrderResponseDto.class);
     }
 }
