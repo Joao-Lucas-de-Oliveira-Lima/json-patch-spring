@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FieldError implements Serializable {
+public class FieldErrorDto implements Serializable {
     @Serial
     private final static long serialVersionUID = 1L;
     String field;

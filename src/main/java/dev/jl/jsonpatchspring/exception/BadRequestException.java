@@ -13,4 +13,8 @@ public class BadRequestException extends RuntimeException{
         super(message);
         this.bindingResult = bindingResult;
     }
+
+    public BadRequestException(String message) {
+        super(message);
+    }
 }

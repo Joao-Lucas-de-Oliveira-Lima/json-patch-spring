@@ -1,7 +1,7 @@
 package dev.jl.jsonpatchspring.exception;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import dev.jl.jsonpatchspring.exception.fielderror.FieldError;
+import dev.jl.jsonpatchspring.exception.fielderror.FieldErrorDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +24,6 @@ public class ExceptionDto implements Serializable {
     private String instance;
     private String detail;
     private String title;
-    private List<FieldError> errors;
+    private List<FieldErrorDto> errors;
     private Instant timestamp;
 }

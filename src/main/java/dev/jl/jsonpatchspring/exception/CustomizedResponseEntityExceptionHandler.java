@@ -1,16 +1,12 @@
 package dev.jl.jsonpatchspring.exception;
 
-import dev.jl.jsonpatchspring.exception.fielderror.FieldError;
-import dev.jl.jsonpatchspring.exception.fielderror.FieldErrorCollector;
-import jakarta.servlet.http.HttpServletRequest;
-import org.antlr.v4.runtime.misc.Interval;
-import org.hibernate.query.spi.Limit;
+import dev.jl.jsonpatchspring.exception.fielderror.FieldErrorDto;
+import dev.jl.jsonpatchspring.exception.fielderror.FieldErrorDtoCollector;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -65,9 +61,10 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ExceptionDto> handlerBadRequestException(WebRequest webRequest, BadRequestException badRequestException){
-        FieldErrorCollector fieldErrorCollector = new FieldErrorCollector();
-        List<FieldError> errors = fieldErrorCollector.extractFieldErrors(badRequestException.getBindingResult());
+    public ResponseEntity<ExceptionDto> handlerBadRequestException(WebRequest webRequest, BadRequestException badRequestException) {
+        FieldErrorDtoCollector fieldErrorDtoCollector = new FieldErrorDtoCollector();
+        List<FieldErrorDto> errors = fieldErrorDtoCollector.extractFieldErrors(badRequestException.getBindingResult());
+
         ExceptionDto response = ExceptionDto.builder()
                 .instance(webRequest.getDescription(false))
                 .Status(HttpStatus.BAD_REQUEST.value())

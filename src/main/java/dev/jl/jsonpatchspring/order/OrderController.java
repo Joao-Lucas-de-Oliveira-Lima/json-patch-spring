@@ -1,5 +1,7 @@
 package dev.jl.jsonpatchspring.order;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import dev.jl.jsonpatchspring.exception.BadRequestException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -14,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/orders")
+@RequestMapping("/v1/orders")
 public class OrderController {
     private final OrderService orderService;
 
@@ -63,7 +65,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable(name = "id") Long id){
+    public ResponseEntity<Void> deleteById(@PathVariable(name = "id") Long id) {
         orderService.deleteById(id);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
@@ -74,10 +76,17 @@ public class OrderController {
     public ResponseEntity<OrderResponseDto> updateById(
             @PathVariable(name = "id") Long id,
             @RequestBody @Valid OrderRequestDto update,
-            BindingResult bindingResult) throws BadRequestException{
-        if(bindingResult.hasErrors()){
+            BindingResult bindingResult) throws BadRequestException {
+        if (bindingResult.hasErrors()) {
             throw new BadRequestException("The provided data is missing or not in a valid format.", bindingResult);
         }
         return ResponseEntity.ok(orderService.updateById(id, update));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> patchById(
+            @PathVariable(name = "id") Long id,
+            @RequestBody JsonNode patch) throws JsonProcessingException {
+        return ResponseEntity.ok(orderService.patchById(id, patch));
     }
 }

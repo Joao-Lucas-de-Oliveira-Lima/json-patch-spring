@@ -1,9 +1,12 @@
 package dev.jl.jsonpatchspring.order;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import dev.jl.jsonpatchspring.exception.IdempotencyKeyConflictException;
 import dev.jl.jsonpatchspring.exception.ResourceNotFoundException;
 import dev.jl.jsonpatchspring.idempotencykey.IdempotencyKeyService;
 import dev.jl.jsonpatchspring.utils.mapper.Mapper;
+import dev.jl.jsonpatchspring.utils.patch.PatchValidator;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,11 +23,16 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final IdempotencyKeyService idempotencyKeyService;
     private final Mapper mapper;
+    private final PatchValidator patchValidator;
 
-    public OrderService(OrderRepository orderRepository, IdempotencyKeyService idempotencyKeyService, Mapper mapper) {
+    public OrderService(OrderRepository orderRepository,
+                        IdempotencyKeyService idempotencyKeyService,
+                        PatchValidator patchValidator,
+                        Mapper mapper) {
         this.orderRepository = orderRepository;
         this.idempotencyKeyService = idempotencyKeyService;
         this.mapper = mapper;
+        this.patchValidator = patchValidator;
     }
 
     @Cacheable(value = "order", key = "#id")
@@ -59,7 +67,7 @@ public class OrderService {
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "order", key="#id"),
+            @CacheEvict(value = "order", key = "#id"),
             @CacheEvict(value = "orderPage", allEntries = true)
     })
     public void deleteById(Long id) {
@@ -76,4 +84,22 @@ public class OrderService {
         Order savedOrder = orderRepository.save(existingOrder);
         return mapper.mapToObject(savedOrder, OrderResponseDto.class);
     }
+
+
+    @Transactional
+    @CachePut(value = "order", key = "#result.id")
+    @CacheEvict(value = "orderPage", allEntries = true)
+    public Object patchById(Long id, JsonNode patch) throws ResourceNotFoundException, JsonProcessingException {
+        Order existingOrder = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Order with ID %d not found.", id)));
+
+        OrderRequestDto existingOrderWithConstraintValidations = mapper.mapToObject(existingOrder, OrderRequestDto.class);
+        OrderRequestDto patchedOrder =
+                patchValidator.validate(existingOrderWithConstraintValidations, OrderRequestDto.class, patch);
+
+        mapper.mapProperties(patchedOrder, existingOrder);
+        Order orderSaved = orderRepository.save(existingOrder);
+        return mapper.mapToObject(orderSaved, OrderResponseDto.class);
+    }
+
 }

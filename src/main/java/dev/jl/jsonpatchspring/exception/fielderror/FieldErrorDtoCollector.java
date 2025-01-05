@@ -6,10 +6,13 @@ import org.springframework.validation.BindingResult;
 import java.util.List;
 
 @Component
-public class FieldErrorCollector {
-    public List<FieldError> extractFieldErrors(BindingResult bindingResult){
+public class FieldErrorDtoCollector {
+    public List<FieldErrorDto> extractFieldErrors(BindingResult bindingResult){
+        if(bindingResult == null || bindingResult.getFieldErrors().isEmpty()){
+            return null;
+        }
         return bindingResult.getFieldErrors().stream()
-                .map(error -> new FieldError(
+                .map(error -> new FieldErrorDto(
                         error.getField(),
                         error.getDefaultMessage()))
                 .toList();

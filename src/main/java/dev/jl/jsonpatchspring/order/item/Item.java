@@ -6,6 +6,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
+import uk.co.jemos.podam.common.PodamDoubleValue;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -25,6 +26,7 @@ public class Item{
     @Column(nullable = false)
     private Integer quantity;
     @Column(nullable = false)
+    @PodamDoubleValue
     private Double price;
     @Column(name = "last_modified")
     @LastModifiedDate
