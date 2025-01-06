@@ -1,8 +1,8 @@
 package dev.jl.jsonpatchspring.order;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import dev.jl.jsonpatchspring.exception.BadRequestException;
+import dev.jl.jsonpatchspring.utils.etag.EtagService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,15 +13,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/orders")
 public class OrderController {
     private final OrderService orderService;
+    private final EtagService etagService;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, EtagService etagService) {
         this.orderService = orderService;
+        this.etagService = etagService;
     }
 
     @GetMapping("/{id}")
@@ -33,13 +36,15 @@ public class OrderController {
     public ResponseEntity<OrderResponseDto> save(
             @RequestHeader(name = "Idempotency-Key") UUID idempotencyKey,
             @Valid @RequestBody OrderRequestDto newOrder,
-            BindingResult bindingResult) throws BadRequestException {
+            BindingResult bindingResult) throws BadRequestException, IOException {
         if (bindingResult.hasErrors()) {
             throw new BadRequestException("The provided data is missing or not in a valid format.", bindingResult);
         }
+        OrderResponseDto responseDto = orderService.save(idempotencyKey, newOrder);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(orderService.save(idempotencyKey, newOrder));
+                .eTag(etagService.generateEtag(responseDto))
+                .body(responseDto);
     }
 
     @GetMapping
@@ -76,17 +81,25 @@ public class OrderController {
     public ResponseEntity<OrderResponseDto> updateById(
             @PathVariable(name = "id") Long id,
             @RequestBody @Valid OrderRequestDto update,
-            BindingResult bindingResult) throws BadRequestException {
+            BindingResult bindingResult) throws BadRequestException, IOException {
         if (bindingResult.hasErrors()) {
             throw new BadRequestException("The provided data is missing or not in a valid format.", bindingResult);
         }
-        return ResponseEntity.ok(orderService.updateById(id, update));
+        OrderResponseDto responseDto = orderService.updateById(id, update);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .eTag(etagService.generateEtag(responseDto))
+                .body(responseDto);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<Object> patchById(
             @PathVariable(name = "id") Long id,
-            @RequestBody JsonNode patch) throws JsonProcessingException {
-        return ResponseEntity.ok(orderService.patchById(id, patch));
+            @RequestBody JsonNode patch) throws IOException {
+        Object responseDto = orderService.patchById(id, patch);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .eTag(etagService.generateEtag(responseDto))
+                .body(responseDto);
     }
 }
