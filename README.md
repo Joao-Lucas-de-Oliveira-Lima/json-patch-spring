@@ -1,114 +1,77 @@
-<p align="center">
-  <a href="" rel="noopener">
- <img width=200px height=200px src="https://i.imgur.com/6wj0hh6.jpg" alt="Project logo"></a>
-</p>
+# JsonPatch with Spring
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)![Apache Maven](https://img.shields.io/badge/Apache%20Maven-C71A36?style=for-the-badge&logo=Apache%20Maven&logoColor=white)![Apache Tomcat](https://img.shields.io/badge/apache%20tomcat-%23F8DC75.svg?style=for-the-badge&logo=apache-tomcat&logoColor=black)
 
-<h3 align="center">Project Title</h3>
-
-<div align="center">
-
-[![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![GitHub Issues](https://img.shields.io/github/issues/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/pulls)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
-
-</div>
-
----
-
-<p align="center"> Few lines describing your project.
-    <br> 
-</p>
-
-## 📝 Table of Contents
+## Table of Contents
 
 - [About](#about)
 - [Getting Started](#getting_started)
-- [Deployment](#deployment)
 - [Usage](#usage)
-- [Built Using](#built_using)
-- [TODO](../TODO.md)
-- [Contributing](../CONTRIBUTING.md)
-- [Authors](#authors)
-- [Acknowledgments](#acknowledgement)
+- [Documentation](#documentation)
 
-## 🧐 About <a name = "about"></a>
+## About <a name = "about"></a>
 
-Write about 1-2 paragraphs describing the purpose of your project.
+This is a REST API that implements a `PATCH` endpoint, following the conventions defined in [RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902). It uses the `zjsonpatch` library to perform the following operations:
 
-## 🏁 Getting Started <a name = "getting_started"></a>
+- `add`
+- `replace`
+- `remove`
+- `move`
+- `copy`
+- `test`
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
+### JsonPatch Validation
+
+Validation is performed by first retrieving the object corresponding to the provided ID and mapping it to a DTO constrained by Jakarta Validation annotations. The object is then converted into a `JsonNode` using `convertToValue()` from Jackson's `ObjectMapper`, and the patch is applied using `JsonPatch.apply()`. After applying the patch, the object is converted back to its original form using `treeToValue()`. The `Validator` is then used to check for any constraint violations. Any validation errors are captured and stored in an object implementing Spring Web's `BindingResult`, which is subsequently processed by the `ExceptionHandler` to handle `BadRequest` errors.
+
+
+### Additional Features
+
+- **Idempotency Keys:** The application uses UUID-based idempotency keys to identify "identical" requests (only the UUID is verified). Each idempotency key is stored in a Redis database with a TTL of 10 minutes.
+
+- **ETags:** ETags are included in the response headers using Spring Web's `ShallowEtagHttpFilter`. They are sent in the headers of responses for `POST`, `PATCH`, `GET` (Get by ID), and `PUT` requests. When a request includes the `If-None-Match` header and the ETag matches the current resource version, the server responds with a `304 Not Modified` status and an empty body, indicating that the resource has not changed since the last request.
+
+## Getting Started <a name = "getting_started"></a>
 
 ### Prerequisites
 
-What things you need to install the software and how to install them.
-
-```
-Give examples
-```
+- Java JDK 21
+- Docker Desktop
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running.
+1. Start PostgreSQL and Redis using `compose.yaml`:
 
-Say what the step will be
-
-```
-Give the example
+```bash
+docker compose up -d
 ```
 
-And repeat
+2. Compile the application:
 
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo.
-
-## 🔧 Running the tests <a name = "tests"></a>
-
-Explain how to run the automated tests for this system.
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
+```bash
+./mvnw compile
 ```
 
-### And coding style tests
+3. Run the application:
 
-Explain what these tests test and why
-
-```
-Give an example
+```bash
+./mvnw spring-boot:run
 ```
 
-## 🎈 Usage <a name="usage"></a>
+## Usage <a name = "usage"></a>
 
-Add notes about how to use the system.
+The application will be available at: [http://localhost:8080](http://localhost:8080)
 
-## 🚀 Deployment <a name = "deployment"></a>
+To access the API, use the following pattern:
 
-Add additional notes about how to deploy this on a live system.
+```plaintext
+http://localhost:8080/api/<resource_path>
+```
 
-## ⛏️ Built Using <a name = "built_using"></a>
+## Documentation <a name = "documentation"></a>
 
-- [MongoDB](https://www.mongodb.com/) - Database
-- [Express](https://expressjs.com/) - Server Framework
-- [VueJs](https://vuejs.org/) - Web Framework
-- [NodeJs](https://nodejs.org/en/) - Server Environment
+### Swagger UI
 
-## ✍️ Authors <a name = "authors"></a>
+- To access the Swagger documentation, visit: [http://localhost:8080/api/swagger-ui/index.html](http://localhost:8080/api/swagger-ui/index.html)
+- For the API documentation in JSON format, use: [http://localhost:8080/api/v3/api-docs](http://localhost:8080/api/v3/api-docs)
 
-- [@kylelobo](https://github.com/kylelobo) - Idea & Initial work
-
-See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) who participated in this project.
-
-## 🎉 Acknowledgements <a name = "acknowledgement"></a>
-
-- Hat tip to anyone whose code was used
-- Inspiration
-- References
+---

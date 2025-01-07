@@ -10,7 +10,7 @@
     </parent>
     <groupId>dev.jl</groupId>
     <artifactId>json-patch-spring</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>json-patch-spring</name>
     <description>json-patch-spring</description>
     <url/>
