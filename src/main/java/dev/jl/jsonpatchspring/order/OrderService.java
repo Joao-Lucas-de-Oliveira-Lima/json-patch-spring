@@ -6,7 +6,7 @@ import dev.jl.jsonpatchspring.exception.IdempotencyKeyConflictException;
 import dev.jl.jsonpatchspring.exception.ResourceNotFoundException;
 import dev.jl.jsonpatchspring.idempotencykey.IdempotencyKeyService;
 import dev.jl.jsonpatchspring.utils.mapper.Mapper;
-import dev.jl.jsonpatchspring.utils.patch.PatchValidator;
+import dev.jl.jsonpatchspring.utils.patch.validation.PatchValidator;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;

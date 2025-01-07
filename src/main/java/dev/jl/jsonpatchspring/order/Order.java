@@ -5,7 +5,6 @@ import dev.jl.jsonpatchspring.order.item.Item;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.context.annotation.Scope;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.Instant;
@@ -15,7 +14,6 @@ import java.util.Set;
 @Table(name = "\"order\"")
 @Data
 @NoArgsConstructor
-@Scope("prototype")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

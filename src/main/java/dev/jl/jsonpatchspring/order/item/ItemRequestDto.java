@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
-public class ItemRequestDto implements Serializable {
+public class ItemRequestDto implements Serializable, Cloneable {
     @Serial
     private static final long serialVersionUID = 1L;
     @NotBlank(message = "Product name cannot be blank. Please provide a valid name for the product.")
@@ -22,4 +22,13 @@ public class ItemRequestDto implements Serializable {
     @NotNull(message = "Price cannot be null. Please provide a valid price.")
     @PositiveOrZero(message = "Price must be a positive value or zero. Please enter a valid price for the product.")
     private Double price;
+
+    @Override
+    public ItemRequestDto clone() {
+        try {
+            return (ItemRequestDto) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

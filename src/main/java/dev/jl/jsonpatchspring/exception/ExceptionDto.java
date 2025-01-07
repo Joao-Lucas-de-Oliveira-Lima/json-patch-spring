@@ -20,7 +20,7 @@ import java.util.List;
 public class ExceptionDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    private Integer Status;
+    private Integer status;
     private String instance;
     private String detail;
     private String title;

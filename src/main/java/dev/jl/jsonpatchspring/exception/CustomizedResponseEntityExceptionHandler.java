@@ -21,7 +21,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     public ResponseEntity<ExceptionDto> handlerException(WebRequest webRequest, Exception e) {
         String message = "An unexpected error occurred on the server. Please try again later.";
         ExceptionDto response = ExceptionDto.builder()
-                .Status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .title(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
                 .instance(webRequest.getDescription(false))
                 .detail(message)
@@ -36,7 +36,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     public ResponseEntity<ExceptionDto> handlerResourceNotFoundException(WebRequest webRequest, Exception e) {
         ExceptionDto response = ExceptionDto.builder()
                 .instance(webRequest.getDescription(false))
-                .Status(HttpStatus.NOT_FOUND.value())
+                .status(HttpStatus.NOT_FOUND.value())
                 .title(HttpStatus.NOT_FOUND.getReasonPhrase())
                 .detail(e.getMessage())
                 .timestamp(Instant.now())
@@ -50,7 +50,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     public ResponseEntity<ExceptionDto> handlerIdempotencyKeyConflictException(WebRequest webRequest, Exception e) {
         ExceptionDto response = ExceptionDto.builder()
                 .instance(webRequest.getDescription(false))
-                .Status(HttpStatus.CONFLICT.value())
+                .status(HttpStatus.CONFLICT.value())
                 .title(HttpStatus.CONFLICT.getReasonPhrase())
                 .detail(e.getMessage())
                 .timestamp(Instant.now())
@@ -67,7 +67,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
         ExceptionDto response = ExceptionDto.builder()
                 .instance(webRequest.getDescription(false))
-                .Status(HttpStatus.BAD_REQUEST.value())
+                .status(HttpStatus.BAD_REQUEST.value())
                 .title(HttpStatus.BAD_REQUEST.getReasonPhrase())
                 .detail(badRequestException.getMessage())
                 .errors(errors)

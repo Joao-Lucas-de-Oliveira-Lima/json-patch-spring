@@ -1,4 +1,4 @@
-package dev.jl.jsonpatchspring.utils.patch;
+package dev.jl.jsonpatchspring.utils.patch.validation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
