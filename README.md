@@ -6,16 +6,32 @@
 - [Usage](#usage)
 - [Documentation](#documentation)
 
+
 ## About <a name = "about"></a>
 
 This is a REST API that implements a `PATCH` endpoint, following the conventions defined in [RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902). It uses the `zjsonpatch` library to perform the following operations:
 
-- `add`
-- `replace`
-- `remove`
-- `move`
-- `copy`
-- `test`
+### Supported Operations:
+- **`add`**: Adds a new value to the specified path.
+- **`replace`**: Replaces the value at the specified path with a new value.
+- **`remove`**: Removes the value at the specified path.
+- **`move`**: Moves a value from one path to another.
+- **`copy`**: Copies a value from one path to another.
+- **`test`**: Tests whether a specified value matches the one at the given path.
+
+### Examples:
+Here are some examples of JSON Patch operations:
+
+```json
+[
+  { "op": "add", "path": "/fieldName", "value": "newValue" },
+  { "op": "replace", "path": "/fieldName", "value": "updatedValue" },
+  { "op": "remove", "path": "/fieldName" },
+  { "op": "move", "from": "/sourceField", "path": "/destinationField" },
+  { "op": "copy", "from": "/sourceField", "path": "/destinationField" },
+  { "op": "test", "path": "/fieldName", "value": "expectedValue" }
+]
+```
 
 ### JsonPatch Validation
 
