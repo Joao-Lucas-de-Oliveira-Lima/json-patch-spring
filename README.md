@@ -9,7 +9,7 @@
 
 ## About <a name="about"></a>
 
-This is a REST API that implements a `PATCH` endpoint following the conventions defined in [RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902). The API uses the `zjsonpatch` library to perform various operations.
+This is a REST API that implements a `PATCH` endpoint following the conventions defined in [RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902). The API uses the `zjsonpatch` library to performe the operations.
 
 ### Supported Operations
 - **`add`**: Adds a new value to the specified path.
