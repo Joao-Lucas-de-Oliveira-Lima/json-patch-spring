@@ -111,12 +111,7 @@ public <T> String generateEtag(T object) throws IOException {
    docker compose up -d
    ```
 
-2. Compile the application:
-   ```bash
-   ./mvnw compile
-   ```
-
-3. Run the application:
+2. Run the application:
    ```bash
    ./mvnw spring-boot:run
    ```
